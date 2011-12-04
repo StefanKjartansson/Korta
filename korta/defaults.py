@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -
 
 
-from datastructures import AttributeDict
+from .datastructures import AttributeDict
 
 
 KORTA = AttributeDict({

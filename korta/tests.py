@@ -1,11 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import ConfigParser
+import sys
+
+if sys.version_info >= (3, 0):
+    import configparser
+else:
+    # Py2K
+    import ConfigParser as configparser
+    # end Py2K
+
 import os
 import unittest
 
-from client import (Client, Customer,
+from .client import (Client, Customer,
     CreditCard, Order, korta_reference)
 
 
@@ -13,7 +21,7 @@ _path = lambda *x: os.path.join(os.path.abspath(
         os.path.dirname(__file__)), *x)
 
 
-config = ConfigParser.RawConfigParser(allow_no_value=True)
+config = configparser.RawConfigParser(allow_no_value=True)
 config.readfp(open('userconfig.ini'))
 
 

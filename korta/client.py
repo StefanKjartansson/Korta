@@ -6,19 +6,24 @@ import itertools
 import logging
 import random
 import string
-import urllib
+import sys
 
-from datastructures import AttributeDict
-from defaults import KORTA, CURRENCY_CODES
-from sslclient import SSLClient
+if sys.version_info >= (3, 0):
+    from urllib.parse import unquote_plus, urlencode
+else:
+    from urllib import unquote_plus, urlencode
+
+from .datastructures import AttributeDict
+from .defaults import KORTA, CURRENCY_CODES
+from .sslclient import SSLClient
 
 
 RKORTA = dict(((v, k) for (k, v)
-    in KORTA.items()))
+    in list(KORTA.items())))
 
 
 RCURRENCY_CODES = dict(((v, k) for (k, v)
-    in CURRENCY_CODES.items()))
+    in list(CURRENCY_CODES.items())))
 
 
 def korta_reference():
@@ -95,8 +100,7 @@ class Client(object):
         def _format(k, v):
             return (RKORTA.get(k), v)
 
-        return AttributeDict([_format(k,
-            urllib.unquote_plus(v))
+        return AttributeDict([_format(k, unquote_plus(v))
                 for (k, v) in itertools.chain([i.split('=')
                     for i in response.split('&')])])
 
@@ -107,7 +111,7 @@ class Client(object):
         self.log.debug('Calling %s, params: %s' % (path, repr(params)))
         r = self.parse_response(
             self.connection.request('GET', '%s?%s' % (path,
-                urllib.urlencode(params))))
+                urlencode(params))))
         if r.action_code != '000':
             self.log.error('Error: %s' % r.error_text)
         return r
@@ -211,7 +215,7 @@ class Client(object):
         ]
 
         params = dict([(KORTA.get(k, k), v)
-            for (k, v) in _params.items()
+            for (k, v) in list(_params.items())
                 if k not in drop])
 
         for i in ['12', '39', '38']:

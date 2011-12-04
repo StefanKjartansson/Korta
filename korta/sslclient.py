@@ -1,8 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -
 
+import sys
 
-import cStringIO
+if sys.version_info >= (3, 0):
+    from io import StringIO
+else:
+    try:
+        from cStringIO import StringIO
+    except ImportError:
+        from StringIO import StringIO
+
 import logging
 import pycurl
 
@@ -46,7 +54,7 @@ class SSLClient(object):
             url = 'https://%s:%s%s' % (self.host, self.port, url)
         self.log.debug(url)
 
-        buffer = cStringIO.StringIO()
+        buffer = StringIO()
         curl = pycurl.Curl()
 
         def _debug(debug_type, debug_msg):
