@@ -32,6 +32,13 @@ def korta_reference():
 
 
 class CreditCard(object):
+    """
+    Simple data class representing a credit card.
+
+    .. note::
+
+        Will be moved into a separate module
+    """
 
     def __init__(self, number, expiration_month, expiration_year, ccv):
         self.number = number
@@ -53,6 +60,13 @@ class CreditCard(object):
 
 
 class Customer(object):
+    """
+    Simple data class representing a customer
+
+    .. note::
+
+        Will be moved into a separate module
+    """
 
     def __init__(self, reference, credit_card, duration=2):
         self.credit_card = credit_card
@@ -61,6 +75,13 @@ class Customer(object):
 
 
 class Order(object):
+    """
+    Simple data class representing an order
+
+    .. note::
+
+        Will be moved into a separate module
+    """
 
     def __init__(self, reference, amount, currency='ISK',
             currency_exponent=2):
@@ -75,6 +96,10 @@ class Order(object):
 
 
 class Client(object):
+    """
+    Encapsulates the logic needed to interface with korta through
+    an instance of the SSLClient.
+    """
 
     def __init__(self, key_file, ca_file, user, password, site_id,
             card_acceptor_id, card_acceptor_identity,
@@ -228,8 +253,15 @@ class Client(object):
         return self.do_request(path, params)
 
     def save_account(self, customer):
+        """
+        Saves an instance of a customer
+        """
         return (self.account_action(customer).action_code == '000')
 
     def delete_account(self, customer):
+        """
+        Deletes an instance of a customer
+
+        """
         return (self.account_action(customer,
             add=False).action_code == '000')
