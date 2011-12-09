@@ -56,3 +56,9 @@ Athugasemdir
 
 * Þarfnast pycurl, hef því ekki hugmynd hvort það virki á Windows.
 * Default ssl pakkinn í Python styður ekki password callbackið úr openssl, ástæðan fyrir pycurl
+
+
+Böggar og patchar
+=================
+
+Þróun fer fram á github: http://github.com/StefanKjartansson/Korta
