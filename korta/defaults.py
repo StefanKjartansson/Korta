@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -
-
+"""
+Values are mapped back and forth between the client and the service,
+this module contains the mappings.
+"""
 
 from .datastructures import AttributeDict
 
