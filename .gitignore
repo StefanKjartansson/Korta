@@ -11,3 +11,6 @@ env/
 .noseids
 .coverage
 userconfig.ini
+_templates
+_static
+_build
