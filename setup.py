@@ -10,7 +10,7 @@ except ImportError:
 
 setup(
     name = "korta",
-    version = "0.1",
+    version = "dev",
     packages = find_packages(),
     install_requires = [
         'pycurl',
