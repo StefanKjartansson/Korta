@@ -204,11 +204,13 @@ class Client(object):
                 KORTA.reference: reference,
                 KORTA.charge_reference: 1})
 
-        if all((cc, ccv, cc_expire)):
+        if all((cc, cc_expire)):
             params.update({
                 KORTA.cc_number: cc,
-                KORTA.cc_verify_code: ccv,
                 KORTA.cc_expire: cc_expire})
+        if ccv:
+            params.update({KORTA.cc_verify_code : ccv})
+
         return self.do_request(path, params)
 
     def one_off_req(self, order, credit_card, dt=None):
