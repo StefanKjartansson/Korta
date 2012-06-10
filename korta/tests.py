@@ -1,44 +1,41 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-import sys
-
-if sys.version_info >= (3, 0):
-    import configparser
-else:
-    # Py2K
-    import ConfigParser as configparser
-    # end Py2K
+"""
+korta.tests
+~~~~~~~~~~~
+"""
+from __future__ import absolute_import
 
 import os
 import unittest
 
-from .client import (Client, Customer,
+from .compat import configparser
+from . import (Client, Customer,
     CreditCard, Order, korta_reference)
-
-
-_path = lambda *x: os.path.join(os.path.abspath(
-        os.path.dirname(__file__)), *x)
-
-
-config = configparser.RawConfigParser(allow_no_value=True)
-config.readfp(open('userconfig.ini'))
 
 
 class KortaTestCase(unittest.TestCase):
 
     def setUp(self):
+        root_dir = os.path.join(os.path.dirname(__file__), os.pardir)
+        config = configparser.RawConfigParser(allow_no_value=True)
+        config.readfp(open(os.path.join(root_dir, 'userconfig.ini')))
 
-        self.client = Client(
-            _path(config.get('korta', 'pem_path')),
-            _path(config.get('korta', 'ca_path')),
-            config.get('korta', 'user'),
-            config.get('korta', 'password'),
-            config.get('korta', 'site_id'),
-            config.get('korta', 'card_acceptor_id'),
-            config.get('korta', 'card_acceptor_identity'),
-            config.get('korta', 'host'),
-        )
+        try:
+            self.client = Client.init_from_url(config.get('korta', 'url'))
+        except configparser.NoOptionError:
+            self.client = Client(
+                config.get('korta', 'user'),
+                config.get('korta', 'password'),
+                config.get('korta', 'host'),
+                config.get('korta', 'port'),
+                site_id=config.get('korta', 'site_id'),
+                card_acceptor_id=config.get('korta', 'card_acceptor_id'),
+                card_acceptor_identity=config.get('korta',
+                    'card_acceptor_identity'),
+                pem=config.get('korta', 'pem'),
+                currency=config.get('korta', 'currency'),
+            )
 
     def test_charge_reference(self):
         unique_reference = korta_reference()
