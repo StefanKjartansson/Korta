@@ -30,7 +30,7 @@ tests_require = [
 
 setup(
     name="korta",
-    version="0.1.4.1",
+    version="0.1.4.2",
     packages=find_packages(),
     install_requires=install_requires,
     package_data={
