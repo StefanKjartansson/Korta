@@ -23,9 +23,10 @@ from .defaults import KORTA, CURRENCY_CODES
 RKORTA = dict(((v, k) for (k, v)
     in list(KORTA.items())))
 
-
 RCURRENCY_CODES = dict(((v, k) for (k, v)
     in list(CURRENCY_CODES.items())))
+
+logger = logging.getLogger(__name__)
 
 
 def korta_reference():
@@ -124,7 +125,6 @@ class Client(object):
         self.card_acceptor_id = card_acceptor_id
         self.card_acceptor_identity = card_acceptor_identity
         self.default_currency = currency
-        self.log = logging.getLogger(__name__)
 
     def parse_response(self, response):
         """
@@ -141,7 +141,7 @@ class Client(object):
         """
         Calls the path with the urlencoded params
         """
-        self.log.debug('Calling %s, params: %s' % (path, repr(params)))
+        logger.debug('Calling %s, params: %s' % (path, repr(params)))
 
         if not path.startswith('http'):
             path = 'https://%s:%s%s' % (self.host, self.port, path)
@@ -155,7 +155,7 @@ class Client(object):
         response = requests.get(path, **options).text
         r = self.parse_response(response)
         if r.action_code != '000':
-            self.log.error('Error: %s' % r.error_text)
+            logger.error('Error: %s' % r.error_text)
         return r
 
     def get_defaults(self):
@@ -240,7 +240,7 @@ class Client(object):
         """
         r = self.one_off_req(order, credit_card, dt=dt)
         if r.action_code != '000':
-            self.log.error('Response error: %s' % r.error_text)
+            logger.error('Response error: %s' % r.error_text)
             return False
         return (self.request_capture(r).action_code == '000')
 
