@@ -2,9 +2,11 @@
 # -*- coding: utf-8 -*-
 """
 """
+import codecs
+import os
 
 try:
-    import multiprocessing
+    import multiprocessing  # noqa
 except ImportError:
     pass
 
@@ -12,6 +14,11 @@ try:
     from setuptools import setup, find_packages
 except ImportError:
     from distutils.core import setup, find_packages  # noqa
+
+
+def read(fname):
+    return codecs.open(os.path.join(os.path.dirname(__file__), fname)).read()
+
 
 install_requires = [
     'requests>=0.13.1',
@@ -23,7 +30,7 @@ tests_require = [
 
 setup(
     name="korta",
-    version="0.1.4",
+    version="0.1.4.1",
     packages=find_packages(),
     install_requires=install_requires,
     package_data={
@@ -35,7 +42,7 @@ setup(
     author="Stefan Kjartansson",
     author_email="esteban.supreme@gmail.com",
     description="Korta Client library",
-    long_description=open('README.rst').read(),
+    long_description=read('README.rst'),
     classifiers=[
         "Development Status :: 4 - Beta",
         "Environment :: Web Environment",
