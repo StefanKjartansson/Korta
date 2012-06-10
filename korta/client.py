@@ -1,21 +1,23 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -
+"""
+korta.client
+~~~~~~~~~~~~
+
+"""
+from __future__ import absolute_import
 
 import datetime
 import itertools
 import logging
 import random
 import string
-import sys
 
-if sys.version_info >= (3, 0):
-    from urllib.parse import unquote_plus, urlencode
-else:
-    from urllib import unquote_plus, urlencode
+import requests
 
+from .compat import unquote_plus, urlparse, parse_qsl
 from .datastructures import AttributeDict
 from .defaults import KORTA, CURRENCY_CODES
-from .sslclient import SSLClient
 
 
 RKORTA = dict(((v, k) for (k, v)
@@ -101,15 +103,21 @@ class Client(object):
     an instance of the SSLClient.
     """
 
-    def __init__(self, key_file, ca_file, user, password, site_id,
-            card_acceptor_id, card_acceptor_identity,
-            host, port=8443, currency='USD'):
+    @staticmethod
+    def init_from_url(url):
+        url = urlparse(url)
+        return Client(url.username, url.password,
+            url.hostname,
+            url.port or (443 if url.scheme == 'https' else 80),
+            ** dict(parse_qsl(url.query)))
 
-        self.connection = SSLClient(host, port)
-        self.connection.set_cert(key_file, ca_file,
-            passwd_cb=password)
-        self.connection.set_user(user, password)
+    def __init__(self, user, password, host, port,
+            site_id=None, card_acceptor_id=None,
+            card_acceptor_identity=None, pem=None, currency='USD'):
 
+        self.host = host
+        self.port = port
+        self.pem = pem
         self.user = user
         self.password = password
         self.site_id = site_id
@@ -134,9 +142,18 @@ class Client(object):
         Calls the path with the urlencoded params
         """
         self.log.debug('Calling %s, params: %s' % (path, repr(params)))
-        r = self.parse_response(
-            self.connection.request('GET', '%s?%s' % (path,
-                urlencode(params))))
+
+        if not path.startswith('http'):
+            path = 'https://%s:%s%s' % (self.host, self.port, path)
+
+        options = {
+            'auth': (self.user, self.password),
+            'cert': self.pem,
+            'params': params,
+        }
+
+        response = requests.get(path, **options).text
+        r = self.parse_response(response)
         if r.action_code != '000':
             self.log.error('Error: %s' % r.error_text)
         return r
@@ -209,7 +226,7 @@ class Client(object):
                 KORTA.cc_number: cc,
                 KORTA.cc_expire: cc_expire})
         if ccv:
-            params.update({KORTA.cc_verify_code : ccv})
+            params.update({KORTA.cc_verify_code: ccv})
 
         return self.do_request(path, params)
 
