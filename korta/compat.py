@@ -24,7 +24,17 @@ if is_py2:
     basestring = basestring
 
 elif is_py3:
-    from urllib.parse import parse_qsl, urlparse, urlunparse, urljoin, urlsplit, urlencode, quote, unquote
+    from urllib.parse import (
+        parse_qsl,
+        quote,
+        unquote,
+        unquote_plus,
+        urlencode,
+        urljoin,
+        urlparse,
+        urlsplit,
+        urlunparse,
+        )
     from urllib.request import parse_http_list
     from io import StringIO
     import configparser

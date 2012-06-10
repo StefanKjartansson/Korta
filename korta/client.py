@@ -29,7 +29,7 @@ RCURRENCY_CODES = dict(((v, k) for (k, v)
 
 
 def korta_reference():
-    return ''.join([random.choice(string.letters)
+    return ''.join([random.choice(string.ascii_letters)
         for i in range(19)])
 
 
