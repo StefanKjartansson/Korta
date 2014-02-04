@@ -42,7 +42,7 @@ class KortaTestCase(unittest.TestCase):
         self.client.save_account(Customer(
             unique_reference,
             CreditCard(
-                '4571999400007492',
+                os.getenv('KORTA_TEST_NUMBER'),
                 5, 14, 123),
         ))
         order_ref = korta_reference()
@@ -54,6 +54,6 @@ class KortaTestCase(unittest.TestCase):
 
     def test_one_off(self):
         x = korta_reference()
-        c = CreditCard('4571999400007492', 5, 14, 123)
+        c = CreditCard(os.getenv('KORTA_TEST_NUMBER'), 5, 14, 123)
         o = Order(x, 2000)
         self.assertEqual(self.client.one_off(o, c), True)
